@@ -151,11 +151,17 @@ app.post("/presentation-response", parser, async (req, res) => {
     .useAudienceUrl(clientId)
     .build();
 
-  const validationResult = await validator.validate(req.body.id_token);
+  let validationResult;
 
-  if (!validationResult.result) {
-    console.error(`Validation failed: ${validationResult.detailedError}`);
-    return res.send();
+  try {
+    validationResult = await validator.validate(req.body.id_token);
+
+    if (!validationResult.result) {
+      console.error(`Validation failed: ${validationResult.detailedError}`);
+      return res.send();
+    }
+  } catch (error) {
+    console.error("validationResult error", error);
   }
 
   var verifiedCredential =
